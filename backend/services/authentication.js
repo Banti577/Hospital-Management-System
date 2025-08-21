@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UserDB = require('../models/userModel');
 
-const secret = process.env.JWT_SECRET;
+const secret = 'upper_case_secret_key';
 
 
 
