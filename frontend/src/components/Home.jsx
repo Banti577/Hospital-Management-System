@@ -41,7 +41,7 @@ function Home({ user }) {
       />
       <h3 className="mb-3 text-primary">Welcome to HealthCare Portal</h3>
       <p className="text-muted">
-        Please <strong>Login as a Patient</strong>
+        Please <strong>Login as a Patient for Book Appointment</strong>
       </p>
       <Link to="/login" className="btn btn-primary w-100 mt-3">
         Login Now
