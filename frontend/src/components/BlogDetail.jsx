@@ -88,6 +88,7 @@ function BlogDetail() {
 
 
   return (
+    <>
     <div className="container py-5">
       {blog ? (
         <div className="card shadow-lg border-0 rounded-4 p-4 bg-light">
@@ -109,6 +110,8 @@ function BlogDetail() {
         </div>
       )}
     </div>
+  </>
+
   );
 }
 

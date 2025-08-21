@@ -7,6 +7,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    role: "",
   });
   const [error, setError] = useState("");
 
@@ -31,14 +32,15 @@ const Signup = () => {
           FullName: form.name,
           email: form.email,
           password: form.password,
+          role: form.role,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("OTP sent to your email!");
-        navigate("/verifyOtp", { state: { email: form.email } });
+        alert("SUCCESSFULL cREATED aCCOUNT");
+        navigate("/user/login");
       } else {
         setError(data.message || "Something went wrong");
       }
@@ -83,6 +85,20 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
+      </div>
+      
+        <div className={styles.inputGroup}>
+        <label>Role</label>
+        <select
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select Role</option>
+          <option value="patient">patient</option>
+          <option value="doctor">doctor</option>
+        </select>
       </div>
 
       <button type="submit" className={styles.button}>

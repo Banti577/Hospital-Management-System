@@ -1,33 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const upload = multer(); // memory storage
 const Blog = require('../models/blogModel');
 const CommentDB = require('../models/commentModel');
 const path = require('path');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.resolve(`./public/uploads/`));
-  },
-  filename: (req, file, cb) => {
-    const filename = `${Date.now()}-${file.originalname}`;
-    cb(null, filename);
-  }
-});
 
-const upload = multer({ storage });
 
-router.post('/', upload.single('coverImage'), async (req, res) => {
+router.post('/', upload.none(), async (req, res) => {
   const { title, content } = req.body;
 
-  //const coverImage = req.file ? `./public/uploads/${req.file.filename}` : null;
-  const coverImage = req.file ? `./public/uploads/${req.file.filename}` : null;
-
+  
   const blog = await Blog.create({
     title,
     content,
     createdBy: req.user._id,
-    coverImageUrl: `/uploads/${req.file.filename}`
   });
   return res.status(200).json({BlogID: blog._id});
 });
@@ -52,24 +40,16 @@ router.get('/:id', async (req, res) => {
 })
 
 
-//comment route
-
-router.post('/comment/:id', async (req, res) => {
-  const blogId = req.params.id;
-
-  const blog = await Blog.findById(blogId);
-
-  const { comment } = req.body;
-  const CommentBy = req.user._id;
-
-  console.log('CommentBy', CommentBy)
-  const commentRes = await CommentDB.create({
-    blogId,
-    comment,
-    CommentBy,
-  });
-  res.redirect(`/blog/${req.params.id}`);
-
-})
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+    if (!deletedBlog) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    res.json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
 
 module.exports = router;

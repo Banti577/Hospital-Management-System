@@ -20,12 +20,14 @@ router.post('/verify-otp', async(req, res) => {
     const FullName =  req.session.FullName;
     const password = req.session.password;
      const email = req.session.email;
+     const role = req.session.role;
 
 
      await UserDB.create({
     FullName, 
     email, 
-    password 
+    password,
+    role,
   });
      return res.status(200).json({ message: "OTP verified successfully" });
   } else {
@@ -47,6 +49,7 @@ router.get('/logout', (req, res) => {
 
 router.get("/me", checkAuthenticationCookie("token"), (req, res) => {
   if (!req.user) {
+    
     return res.status(401).json({ message: "Unauthorized" });
   }
 

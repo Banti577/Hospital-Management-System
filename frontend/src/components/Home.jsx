@@ -7,90 +7,123 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Home.css"; // Enhanced Design CSS
 
-function Home() {
+function Home({ user }) {
   const [blogs, setBlogs] = useState([]);
   const BASE_URL = "http://localhost:5000";
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api")
+    axios
+      .get(`${BASE_URL}/api`)
       .then((res) => setBlogs(res.data))
       .catch((err) => console.error(err));
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/blog/${id}`);
+      // delete ke baad UI update karo
+      setBlogs((prev) => prev.filter((blog) => blog._id !== id));
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+
   return (
     <>
-      <header className="home-header text-center py-4 mb-4">
-        <h1 className="display-5 fw-bold">Explore Inspiring Blogs</h1>
-        <p className="lead">Fresh ideas, unique voices & stories worth reading</p>
-      </header>
+      {!user && (
 
-      {/* Carousel Slider */}
-      <div id="blogSlider" className="carousel slide custom-carousel" data-bs-ride="carousel">
-        <div className="carousel-inner">
+     <div className="d-flex justify-content-center align-items-center my-5">
+    <div className="card shadow p-4 text-center" style={{ maxWidth: "450px" }}>
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png"
+        alt="Login Illustration"
+        style={{ width: "120px", margin: "0 auto 20px" }}
+      />
+      <h3 className="mb-3 text-primary">Welcome to HealthCare Portal</h3>
+      <p className="text-muted">
+        Please <strong>Login as a Patient</strong>
+      </p>
+      <Link to="/login" className="btn btn-primary w-100 mt-3">
+        Login Now
+      </Link>
+      <p className="mt-3 text-muted">
+        New User? <Link to="user/signup">Create an Account</Link>
+      </p>
+    </div>
+  </div>
+      )}
+
+      {/* --------- Patient Section --------- */}
+      {user && user.role === "patient" && (
+        <section className="container blog-grid mt-5">
+          {(() => {
+            const filteredBlogs = blogs.filter(
+              (blog) => blog.createdBy?._id === user._id
+            );
+
+            return filteredBlogs.length > 0 ? (
+              filteredBlogs.map((blog) => (
+                <div
+                  className="card blog-card enhanced-card shadow"
+                  key={blog._id}
+                >
+                  <div className="card-body">
+                    <h5 className="card-title blog-title">{blog.title}</h5>
+                    <p className="text-muted">
+                      Booked By: {blog.createdBy?.FullName}
+                    </p>
+                    <Link
+                      to={`/blog/${blog._id}`}
+                      className="btn btn-outline-primary w-100 mt-2"
+                    >
+                      Read More
+                    </Link>
+
+                    <button
+                      onClick={() => handleDelete(blog._id)}
+                      className="btn btn-outline-danger w-100 mt-2"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-muted my-5">
+                <h2>No Appointments Available</h2>
+              </div>
+            );
+          })()}
+        </section>
+      )}
+
+      {/* --------- Doctor Section --------- */}
+      {user && user.role === "doctor" && (
+        <section className="container blog-grid mt-5">
           {blogs && blogs.length > 0 ? (
-            blogs.map((blog, idx) => (
+            blogs.map((blog) => (
               <div
-                className={`carousel-item ${idx === 0 ? "active" : ""}`}
+                className="card blog-card enhanced-card shadow"
                 key={blog._id}
               >
-                <img
-                  src={`${BASE_URL}${blog.coverImageUrl}`}
-                  className="d-block w-100 carousel-img"
-                  alt="Blog Slide"
-                />
-                <div className="carousel-caption d-none d-md-block carousel-caption-custom">
-                  <h3 className="carousel-blog-title">{blog.title}</h3>
-                  <Link to={`/blog/${blog._id}`} className="btn btn-light btn-sm mt-2">
+                <div className="card-body">
+                  <h5 className="card-title blog-title">{blog.title}</h5>
+                  <Link
+                    to={`/blog/${blog._id}`}
+                    className="btn btn-outline-primary w-100 mt-2"
+                  >
                     Read More
                   </Link>
                 </div>
               </div>
             ))
           ) : (
-            <div className="carousel-item active">
-              <div className="d-flex align-items-center justify-content-center empty-carousel">
-                <h3 className="text-muted">No Blogs Available</h3>
-              </div>
+            <div className="text-center text-muted my-5">
+              <h2>No Patient Available</h2>
             </div>
           )}
-        </div>
-        <button className="carousel-control-prev" type="button" data-bs-target="#blogSlider" data-bs-slide="prev">
-          <span className="carousel-control-prev-icon" />
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button className="carousel-control-next" type="button" data-bs-target="#blogSlider" data-bs-slide="next">
-          <span className="carousel-control-next-icon" />
-          <span className="visually-hidden">Next</span>
-        </button>
-      </div>
-
-      {/* Blog Cards Section */}
-      <section className="container blog-grid mt-5">
-        {blogs && blogs.length > 0 ? (
-          blogs.map((blog) => (
-            <div className="card blog-card enhanced-card shadow" key={blog._id}>
-              <div className="card-img-container">
-                <img
-                  src={`${BASE_URL}${blog.coverImageUrl}`}
-                  className="card-img-top blog-card-img"
-                  alt="Blog"
-                />
-              </div>
-              <div className="card-body">
-                <h5 className="card-title blog-title">{blog.title}</h5>
-                <Link to={`/blog/${blog._id}`} className="btn btn-outline-primary w-100 mt-2">
-                  Read More
-                </Link>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center text-muted my-5">
-            <h2>No Blogs Available</h2>
-            <p>Stay tuned for the latest updates and inspiring posts!</p>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
     </>
   );
 }

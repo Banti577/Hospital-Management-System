@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import Signup from "./components/signup";
-import VerifyOtp from "./components/VerifyOtp";
+
 import Login from "./components/Login";
 import { useEffect, useState } from "react";
 import Logout from "./components/Logout";
@@ -39,11 +39,10 @@ const [user, setUser] = useState(null);
       <Routes>
 
 
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home  user={user} />} />
         <Route path="/user/signup" element={<Signup />} />
         <Route path="/user/login" element={<Login setUser={setUser} />} />
         <Route path="/user/logout" element={<Logout setUser={setUser} />} />
-        <Route path="/verifyOtp" element={<VerifyOtp />} />
         <Route path="/blog/addBlog" element={<AddBlog />} />
         <Route path="/blog/:BlogId" element={<BlogDetail />} />
        

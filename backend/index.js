@@ -1,4 +1,5 @@
 
+require("dotenv").config();
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
@@ -36,10 +37,6 @@ app.use('/img', express.static(path.join(__dirname, 'public/img')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 
-
-
-
-
 //Global Middleware to make user available in all views
 
 app.use((req, res, next) => {
@@ -54,10 +51,11 @@ app.use('/user', staticRouter);
 app.use('/blog', blogRouter);
 
 app.get('/api', async(req, res) => {
-  const allBlogs = await Blog.find({}).sort({ createdAt: -1 });
-  console.log('bhaiya ji saiyyaa');
-   res.json(allBlogs);
+const blogs = await Blog.find({})
+  .populate("createdBy", "FullName email"); 
+res.json(blogs);
 });
+
 
 
 connectToMongoDB(process.env.MONGO_URL);
