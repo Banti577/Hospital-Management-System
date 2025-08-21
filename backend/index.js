@@ -58,7 +58,7 @@ res.json(blogs);
 
 
 
-connectToMongoDB(process.env.MONGO_URL);
+connectToMongoDB('mongodb+srv://patelvn2002:BantiPatel%40000612@cluster0.iqukl.mongodb.net/Blogify?retryWrites=true&w=majority&appName=Cluster0');
 //'10.162.156.212',
 
 app.listen(port, (req, res) => {
